@@ -10,14 +10,38 @@ add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
 target("ringbuffer")
     set_kind("static")
     add_includedirs("include")
-    add_files("src/*.c")
+    add_files("src/ringbuffer.c")
 
 target("ringbuffer-test")
     set_kind("binary")
-    add_files("tests/*.c")
+    add_files("tests/test_ringbuffer.c")
     add_includedirs("include")
     add_deps("ringbuffer")
     add_links("ringbuffer")
+
+target("doubly_linked_list")
+    set_kind("static")
+    add_includedirs("include")
+    add_files("src/doubly_linked_list.c")
+
+target("doubly_linked_list-test")
+    set_kind("binary")
+    add_files("tests/test_doubly_linked_list.c")
+    add_includedirs("include")
+    add_deps("doubly_linked_list")
+    add_links("doubly_linked_list")
+
+target("stack")
+    set_kind("static")
+    add_includedirs("include")
+    add_files("src/stack.c")
+
+target("stack-test")
+    set_kind("binary")
+    add_files("tests/test_stack.c")
+    add_includedirs("include")
+    add_deps("stack")
+    add_links("stack")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
