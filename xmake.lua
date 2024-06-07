@@ -43,6 +43,22 @@ target("stack-test")
     add_deps("stack")
     add_links("stack")
 
+target("queue")
+    set_kind("static")
+    add_includedirs("include")
+    add_files("src/queue.c")
+    add_deps("doubly_linked_list")
+    add_links("doubly_linked_list")
+
+target("queue-test")
+    set_kind("binary")
+    add_files("tests/test_queue.c")
+    add_includedirs("include")
+    add_deps("queue")
+    add_links("queue")
+    add_deps("doubly_linked_list")
+    add_links("doubly_linked_list")
+
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
 --
