@@ -1,0 +1,5 @@
+target("libca.em_ota")
+    set_kind("static")
+    add_files("partition.c")
+    add_deps("libca.em_base")
+    add_includedirs("..", {public = true})
