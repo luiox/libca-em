@@ -1,4 +1,4 @@
-add_includedirs("$(projectdir)/libca.em/src", { public = true })
+add_includedirs("$(projectdir)/src", { public = true })
 
 includes("src/em_base")
 includes("src/em_bus")

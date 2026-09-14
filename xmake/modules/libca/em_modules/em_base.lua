@@ -25,7 +25,7 @@ function get_handler()
     return {
         deps = {},
         handle = function (target, state, opts)
-            local src_root = path.join(state.root, "libca.em", "src")
+            local src_root = path.join(state.root, "src")
             local base_dir = path.join(src_root, "em_base")
 
             opts = type(opts) == "table" and opts or {}

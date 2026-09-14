@@ -1,4 +1,4 @@
-local src_dir = "$(projectdir)/libca.em/src/em_base"
+local src_dir = "$(projectdir)/src/em_base"
 
 -- User-mode tests import libca.em from source package manager entry.
 add_moduledirs(path.join(os.projectdir(), "xmake", "modules"))

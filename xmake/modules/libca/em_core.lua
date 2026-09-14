@@ -35,7 +35,7 @@ local function _validate_target(target, where)
 end
 
 local function _new_state(root)
-    local src_root = path.join(root, "libca.em", "src")
+    local src_root = path.join(root, "src")
     return {
         root = root,
         src_root = src_root,
@@ -260,9 +260,9 @@ function setup(target, opts, registry)
     if not root or root == "" or not os.isdir(root) then
         raise("libca.em.setup: invalid root '%s'", tostring(opts.root))
     end
-    local src_root = path.join(root, "libca.em", "src")
+    local src_root = path.join(root, "src")
     if not os.isdir(src_root) then
-        raise("libca.em.setup: root does not contain libca.em/src: %s", tostring(root))
+        raise("libca.em.setup: root does not contain src: %s", tostring(root))
     end
 
     local state = _new_state(root)

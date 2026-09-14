@@ -1,1 +1,1 @@
--- test target moved to libca.em/unittests/em_eimui/xmake.lua
+-- test target moved to unittests/em_eimui/xmake.lua

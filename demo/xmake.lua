@@ -17,7 +17,7 @@ if is_plat("windows") then
 end
 
 -- 模拟用户工程：只通过 import 模块接入 libca 源码包
-add_moduledirs(path.join(os.scriptdir(), "..", "..", "xmake", "modules"))
+add_moduledirs(path.join(os.scriptdir(), "..", "xmake", "modules"))
 
 target("demo_led_extern")
     set_kind("binary")
@@ -25,7 +25,7 @@ target("demo_led_extern")
     on_load(function (target)
         local em = import("libca.em")
         em.setup(target, {
-            root = path.join(os.scriptdir(), "..", "..")
+            root = path.join(os.scriptdir(), "..")
         })
 
         em.add_libs(target, {
@@ -45,7 +45,7 @@ target("demo_led_dynamic")
     on_load(function (target)
         local em = import("libca.em")
         em.setup(target, {
-            root = path.join(os.scriptdir(), "..", "..")
+            root = path.join(os.scriptdir(), "..")
         })
 
         em.add_libs(target, {
@@ -64,7 +64,7 @@ target("demo_led_no_port")
     on_load(function (target)
         local em = import("libca.em")
         em.setup(target, {
-            root = path.join(os.scriptdir(), "..", "..")
+            root = path.join(os.scriptdir(), "..")
         })
 
         em.add_libs(target, {
@@ -83,7 +83,7 @@ target("demo_module_batch")
     on_load(function (target)
         local em = import("libca.em")
         em.setup(target, {
-            root = path.join(os.scriptdir(), "..", "..")
+            root = path.join(os.scriptdir(), "..")
         })
         em.add_libs(target, {
             em_component = true,
@@ -96,8 +96,8 @@ target("demo_driver_manifests_check")
     set_kind("binary")
     add_files("app/main.c")
     on_load(function (target)
-        local root = path.join(os.scriptdir(), "..", "..")
-        local driver_root = path.join(root, "libca.em", "src", "em_driver")
+        local root = path.join(os.scriptdir(), "..")
+        local driver_root = path.join(root, "src", "em_driver")
 
         local function extract_brace_block(text, from_pos)
             local start_pos = text:find("{", from_pos, true)
@@ -208,7 +208,7 @@ target("check_em_contract")
     set_default(false)
     on_run(function ()
         local em = import("libca.em")
-        local root = path.join(os.scriptdir(), "..", "..")
+        local root = path.join(os.scriptdir(), "..")
 
         local function new_fake_target(name)
             local result = {
@@ -338,7 +338,7 @@ target("check_em_contract")
             em.setup(new_fake_target("invalid-setup-options"), "invalid")
         end)
 
-        expect_error("setup root", "root does not contain libca.em/src", function ()
+        expect_error("setup root", "root does not contain src", function ()
             em.setup(new_fake_target("invalid-setup-root"), {root = os.scriptdir()})
         end)
 
