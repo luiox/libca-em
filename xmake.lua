@@ -1,3 +1,22 @@
+set_project("libca-em")
+set_version("0.0.1")
+set_xmakever("2.8.3")
+
+add_rules("mode.debug", "mode.release")
+
+if is_plat("windows") then
+    -- Xmake maps c99 to /TP for MSVC; C11 keeps these C99-compatible sources in C mode.
+    set_languages("c11")
+    add_cflags("/utf-8")
+else
+    set_languages("c99")
+end
+
+option("with_demo")
+    set_default(false)
+    set_showmenu("enable demo targets")
+option_end()
+
 add_includedirs("$(projectdir)/src", { public = true })
 
 includes("src/em_base")

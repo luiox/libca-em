@@ -494,7 +494,7 @@ TOTAL: 20 tests, 20 passed, 0 failed
 
 ### 📦 交付物
 
-1. **核心库** - `libca.em_shell`
+1. **核心库** - `em_shell`
    - 完全功能性的 shell 实现
    - 支持树形命令和参数解析
    - 轻量级设计，适合嵌入式场景

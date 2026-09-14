@@ -1,0 +1,7 @@
+build/
+.xmake/
+*.exe
+*.elf
+*.bin
+*.hex
+*.map

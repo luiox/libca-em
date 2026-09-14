@@ -1,8 +1,52 @@
-# libca.em组件索引与功能概览
+# libca-em
+
+libca 的嵌入式组件（em_*）独立源码包仓库：纯 C 实现，覆盖基础类型/调试、总线、
+传感器驱动、OTA、传输协议栈（XMODEM/YMODEM）、交互式 shell、日志、内存池、
+软定时器等，通过 xmake import 源码包管理器接入宿主工程。
+
+从 [libca](https://github.com/luiox/libca) 拆出（git subtree split 保留完整提交历史），
+拆分后桌面版 libca 不再携带 em 源码。
+
+## 宿主工程接入
+
+xmake ≥ 2.8.3。模块以源码注入方式编译进宿主 target（不产出独立库文件）：
+
+```lua
+add_moduledirs("<libca-em 路径>/xmake/modules")
+
+target("app")
+    set_kind("binary")
+    on_load(function (target)
+        local em = import("libca.em")
+        em.setup(target, { root = "<libca-em 路径>" })
+        em.add_libs(target, "em_base", "em_util")
+    end)
+```
+
+- `import("libca.em")` 命名空间沿用拆分前的入口名，老消费方迁移只改 `root` 与
+  `add_moduledirs` 两处路径；
+- `em.add_libs` 接受单个模块名或表（带配置），模块依赖自动按声明顺序展开；
+- `em_eimui`（SDL UI）有意不接入源码包管理器，需要时在宿主工程手动接入；
+- 驱动走数据驱动清单（`src/em_driver/<name>/<name>.lua`），板级 port 文件以
+  绝对路径通过 `port` 配置传入。
+
+## 本仓库自构建（单测 / demo）
+
+```sh
+xmake f -y              # 配置（默认含 unittests）
+xmake -y                # 全量构建
+xmake test              # 运行单测（em_test 规则自动注册）
+
+xmake f --with_demo=y -y
+xmake -y
+xmake run demo_led_extern
+```
+
+---
+
+## 组件索引与功能概览
 
 面向嵌入式工程的 em_ 组件清单，包含主要功能与常见使用入口。
-
-
 
 ## 目录
 
@@ -52,8 +96,6 @@
 | `string_util.h`     | 字符串工具       | 字符串长度计算、格式化辅助                      |
 | `debug.h`           | 调试打印系统     | 调试输出、断言宏、参数检查、可配置输出缓冲区    |
 
-
-
 ## em_test: 单元测试组件
 
 断言
@@ -71,8 +113,6 @@
 | 字符串     | `TEST_EXPECT_EQ_STR`         | 字符串比较                    |
 | 内存       | `TEST_EXPECT_EQ_MEM`         | 内存块比较                    |
 | 真值       | `TEST_EXPECT_EQ_TRUE/FALSE`  | 显式真假值检查                |
-
-
 
 ## em_util: 通用组件
 
@@ -140,6 +180,3 @@
 | SGP30    | 空气质量传感器                             | 待确认         |
 | TOFXXF   | 激光测距模块                               | 已验证         |
 | W25QXX   | SPI Flash驱动（W25Q系列）                  | 已验证         |
-
-
-
