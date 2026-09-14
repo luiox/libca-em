@@ -5,7 +5,7 @@ target("test-async")
     add_includedirs(src_dir, ".")
     add_files(path.join(src_dir, "async.c"), "test_async.c")
     add_rules("em_test", { test_enable = true, use_default_main = true })
-    add_deps("libca.em_util")
+    add_deps("em_util")
 
 target("test-soft_timer")
     set_kind("binary")

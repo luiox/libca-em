@@ -1,5 +1,5 @@
-target("libca.em_platform")
+target("em_platform")
     set_kind("static")
     set_group("em")
     add_files("*.c")
-    add_deps("libca.em_base")
+    add_deps("em_base")

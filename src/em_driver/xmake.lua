@@ -1,7 +1,7 @@
-target("libca.em_driver")
+target("em_driver")
     set_kind("static")
     set_group("em")
-    add_deps("libca.em_base", "libca.em_util")
+    add_deps("em_base", "em_util")
     -- 仓库内部聚合 target，仅用于构建和测试。
     -- 外部项目应使用 import("libca.em") 和 em.add_libs(...)。
     add_files(path.join(os.scriptdir(), "**.c"))

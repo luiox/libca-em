@@ -1,5 +1,5 @@
-target("libca.em_crypto")
+target("em_crypto")
     set_kind("static")
     set_group("em")
     add_files("*.c")
-    add_deps("libca.em_base")
+    add_deps("em_base")

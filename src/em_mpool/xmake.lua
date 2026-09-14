@@ -1,6 +1,6 @@
-target("libca.em_mpool")
+target("em_mpool")
 	set_kind("static")
 	set_group("em")
 	add_files("fixed_allocator.c")
-	add_deps("libca.em_base", "libca.em_util")
+	add_deps("em_base", "em_util")
 	add_includedirs("..", {public = true})

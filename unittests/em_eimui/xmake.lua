@@ -4,7 +4,7 @@ add_requires("libsdl2", "libsdl2_ttf")
 target("test-em_eimui")
     set_kind("binary")
     add_files("$(projectdir)/src/em_eimui/*.c")
-    add_deps("libca.em_base")
+    add_deps("em_base")
     add_packages("libsdl2", "libsdl2_ttf")
 
     if is_plat("windows") then
