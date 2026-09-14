@@ -7,14 +7,14 @@
 在仓库根目录执行：
 
 ```bash
-xmake f -P libca.em/demo -c -y
-xmake build -P libca.em/demo -a
-xmake run -P libca.em/demo demo_led_extern
-xmake run -P libca.em/demo demo_led_dynamic
-xmake run -P libca.em/demo demo_led_no_port
-xmake run -P libca.em/demo demo_module_batch
-xmake run -P libca.em/demo demo_driver_manifests_check
-xmake run -P libca.em/demo check_em_contract
+xmake f -P demo -c -y
+xmake build -P demo -a
+xmake run -P demo demo_led_extern
+xmake run -P demo demo_led_dynamic
+xmake run -P demo demo_led_no_port
+xmake run -P demo demo_module_batch
+xmake run -P demo demo_driver_manifests_check
+xmake run -P demo check_em_contract
 ```
 
 ## 关键点
