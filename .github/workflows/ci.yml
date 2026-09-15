@@ -1,0 +1,82 @@
+# libca-em CI（Linux + Windows）
+#
+# 范围：全部 em 模块 + unittests/ 下 62 个主机可跑的 test-* 二进制
+# （自研 em_test 框架，成功退出 0，失败非 0）。
+#
+# 说明：
+# - 不含 demo/：demo 目标需要 arm-none-eabi 交叉工具链（ota 硬件工程），
+#   CI 只覆盖主机构建与单测；交叉编译由消费工程（ota_demo）侧验证。
+# - em_eimui 的 SDL 测试由 enable_em_eimui_test 开关守护（默认关），CI 不拉
+#   SDL 依赖。
+# - unittests 中的 user-mode 用例同时验证 libca.em 源码包管理器契约
+#   （em.setup / em.add_libs 的依赖补全与配置矩阵）。
+
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "unittests/**"
+      - "xmake/**"
+      - "xmake.lua"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "unittests/**"
+      - "xmake/**"
+      - "xmake.lua"
+      - ".github/workflows/ci.yml"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: build & test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            plat: linux
+            arch: x64
+          - os: windows-latest
+            plat: windows
+            arch: x64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup xmake
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: v3.0.9
+          actions-cache-folder: '.xmake-cache'
+
+      - name: Configure
+        run: xmake f -p ${{ matrix.plat }} -a ${{ matrix.arch }} -m release -y
+
+      - name: Build
+        run: xmake -y
+
+      - name: Run unit tests
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            BINS=$(find build -type f -name "test-*.exe" | sort)
+          else
+            BINS=$(find build -type f -name "test-*" -executable | sort)
+          fi
+          echo "test binaries found: $(echo "$BINS" | grep -c . )"
+          fail=0
+          for f in $BINS; do
+            echo "== running $f"
+            "$f" || { echo "FAILED: $f"; fail=1; }
+          done
+          exit $fail
