@@ -19,6 +19,14 @@ option_end()
 
 add_includedirs("$(projectdir)/src", { public = true })
 
+-- Linux 交叉 sysroot 的 libm 未并入 libc，数学函数（tanf/sqrtf 等）需显式链接；
+-- 新版 glibc 原生环境可过，但 aarch64 交叉链接会报 undefined reference to `tanf'。
+-- 注意：根作用域 add_syslinks 的 {plat=...} 过滤不生效（会把 m.lib 泄漏给 MSVC），
+-- 必须用 is_plat 条件。
+if is_plat("linux") then
+    add_syslinks("m")
+end
+
 includes("src/em_base")
 includes("src/em_bus")
 includes("src/em_component")

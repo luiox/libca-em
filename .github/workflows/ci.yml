@@ -59,11 +59,11 @@ jobs:
           - os: ubuntu-latest
             plat: linux
             arch: i386
-            apt-packages: gcc-multilib
+            apt-packages: "gcc-multilib g++-multilib"
           - os: ubuntu-latest
             plat: linux
             arch: aarch64
-            apt-packages: "gcc-aarch64-linux-gnu qemu-user-static"
+            apt-packages: "gcc-aarch64-linux-gnu g++-aarch64-linux-gnu qemu-user-static"
             cross: "aarch64-linux-gnu-"
             run-prefix: "qemu-aarch64-static -L /usr/aarch64-linux-gnu"
           # ---- Windows ----
