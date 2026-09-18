@@ -83,7 +83,9 @@ TEST_CASE(fixed_allocator_invalid_param)
     i32 ret = fixed_allocator_init(&allocator, memory, sizeof(memory), 16U, 2U, 3U);
     TEST_ASSERT_EQUAL_INT(FIXED_ALLOCATOR_ERR_INVALID_ALIGN, ret);
 
-    ret = fixed_allocator_init(&allocator, memory, sizeof(memory), 16U, 2U, 4U);
+    /* 对齐是 2 的幂但小于指针大小；sizeof(void*)/2 在 32/64 位下分别为 2/4，
+     * 恒为 2 的幂且恒小于 sizeof(void*)，用例在两类平台下行为一致 */
+    ret = fixed_allocator_init(&allocator, memory, sizeof(memory), 16U, 2U, sizeof(void *) / 2U);
     TEST_ASSERT_EQUAL_INT(FIXED_ALLOCATOR_ERR_INVALID_ALIGN, ret);
 
     ret = fixed_allocator_init(&allocator, memory, 24U, 16U, 2U, 8U);

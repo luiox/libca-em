@@ -1,4 +1,4 @@
-# libca-em CI（Linux + Windows）
+# libca-em CI（Linux + Windows × x86 / x64 / aarch64）
 #
 # 范围：全部 em 模块 + unittests/ 下 62 个主机可跑的 test-* 二进制
 # （自研 em_test 框架，成功退出 0，失败非 0）。
@@ -10,6 +10,14 @@
 #   SDL 依赖。
 # - unittests 中的 user-mode 用例同时验证 libca.em 源码包管理器契约
 #   （em.setup / em.add_libs 的依赖补全与配置矩阵）。
+#
+# 矩阵（构建 + 运行单测）：
+# - linux x64：原生构建直跑。
+# - linux i386：gcc-multilib（-m32）构建，x64 内核直跑 32 位测试。
+# - linux aarch64：aarch64-linux-gnu-gcc 交叉构建，qemu-user-static 运行测试。
+# - windows x64：MSVC 原生构建直跑。
+# - windows x86：MSVC 交叉构建，测试经 WoW64 直跑。
+# - windows arm64：windows-11-arm 原生 runner，原生构建直跑。
 
 name: CI
 
@@ -37,21 +45,51 @@ concurrency:
 
 jobs:
   build-and-test:
-    name: build & test (${{ matrix.os }})
+    name: build & test (${{ matrix.plat }} / ${{ matrix.arch }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
         include:
+          # ---- Linux（x64 宿主机）----
           - os: ubuntu-latest
             plat: linux
             arch: x64
+          - os: ubuntu-latest
+            plat: linux
+            arch: i386
+            apt-packages: "gcc-multilib g++-multilib"
+          - os: ubuntu-latest
+            plat: linux
+            arch: aarch64
+            apt-packages: "gcc-aarch64-linux-gnu g++-aarch64-linux-gnu qemu-user-static"
+            cross: "aarch64-linux-gnu-"
+            run-prefix: "qemu-aarch64-static -L /usr/aarch64-linux-gnu"
+          # ---- Windows ----
           - os: windows-latest
             plat: windows
             arch: x64
+          - os: windows-latest
+            plat: windows
+            arch: x86
+          - os: windows-11-arm
+            plat: windows
+            arch: arm64
+    env:
+      CI_PLAT: ${{ matrix.plat }}
+      CI_ARCH: ${{ matrix.arch }}
+      CI_CROSS: ${{ matrix.cross }}
+      CI_RUN_PREFIX: ${{ matrix.run-prefix }}
+      CI_APT_PACKAGES: ${{ matrix.apt-packages }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install toolchains (linux cross / i386)
+        if: runner.os == 'Linux' && matrix.apt-packages != ''
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y $CI_APT_PACKAGES
 
       - name: Setup xmake
         uses: xmake-io/github-action-setup-xmake@v1
@@ -60,7 +98,14 @@ jobs:
           actions-cache-folder: '.xmake-cache'
 
       - name: Configure
-        run: xmake f -p ${{ matrix.plat }} -a ${{ matrix.arch }} -m release -y
+        shell: bash
+        run: |
+          args=(-p "$CI_PLAT" -a "$CI_ARCH" -m release -y)
+          if [ -n "$CI_CROSS" ]; then
+            # xmake 只认 --cross=value 等号形式，空格分隔会报 Invalid flag
+            args+=("--cross=$CI_CROSS")
+          fi
+          xmake f "${args[@]}"
 
       - name: Build
         run: xmake -y
@@ -77,6 +122,6 @@ jobs:
           fail=0
           for f in $BINS; do
             echo "== running $f"
-            "$f" || { echo "FAILED: $f"; fail=1; }
+            $CI_RUN_PREFIX "$f" || { echo "FAILED: $f"; fail=1; }
           done
           exit $fail
