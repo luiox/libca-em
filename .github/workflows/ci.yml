@@ -102,7 +102,8 @@ jobs:
         run: |
           args=(-p "$CI_PLAT" -a "$CI_ARCH" -m release -y)
           if [ -n "$CI_CROSS" ]; then
-            args+=(--cross "$CI_CROSS")
+            # xmake 只认 --cross=value 等号形式，空格分隔会报 Invalid flag
+            args+=("--cross=$CI_CROSS")
           fi
           xmake f "${args[@]}"
 
